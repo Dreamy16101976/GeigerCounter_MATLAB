@@ -6,10 +6,12 @@
 % серия из нескольких измерений
 clc; % очистка окна команд
 close all;  % удаление фигур
-disp('© 2015 acdc.foxylab.com');
 disp('***** Geiger counter *****');
-disp('**************************');
 disp('***Moving average algorithm***');
+disp('Alexey V. Voronin @ FoxyLab © 2015');
+disp('http://acdc.foxylab.com');
+disp('**************************');
+%ввод длительности измерений, секунды
 prompt = {'Measurement period, sec'};
 defans = {'900'};
 answer = inputdlg(prompt,'Measurement period',1,defans);
@@ -18,6 +20,7 @@ if ~status
     error('Incorrect value!');
 end;
 disp(sprintf('T = %d sec',nums));
+%ввод ширины окна "скользящего среднего", секунды
 prompt = {'Moving average window size, sec'};
 defans = {'900'};
 answer = inputdlg(prompt,'Moving average window size',1,defans);
@@ -32,33 +35,33 @@ threshold = 0.5; % граница импульса
 pause = 5; % длина паузы в сэмплах
 ai = analoginput('winsound'); % creates the analog input object AI for a sound card having an ID of 0 (adaptor must be winsound)
 addchannel(ai,1); 
-set (ai, 'SampleRate', Fs); % set the sample rate
-set (ai, 'SamplesPerTrigger', duration*Fs); % set number of samples to acquire
-set (ai, 'TriggerType', 'Manual'); % set acquisition start type
+set (ai, 'SampleRate', Fs); %установка частоты оцифровки
+set (ai, 'SamplesPerTrigger', duration*Fs); %задание числа сэмплов для захвата
+set (ai, 'TriggerType', 'Manual'); %ручной старт захвата
 set(ai,'TriggerRepeat',Inf);
-start(ai); % The start command will start the acquisition running
-MAs = []; % создаем массив для хранения всех MA
-MABuffer = []; % создаем массив для подсчета MA
-MASize = window;%размер буфера равен размеру окна
-MACount = 0;%сброс счетчика заполнения буфера
-for m =1:1:MASize %очистка буфераы
+start(ai); %готовность к началу захвата
+MAs = []; %создаем массив для хранения всех MA
+MABuffer = []; %создаем массив для подсчета MA
+MASize = window; %размер буфера равен размеру окна
+MACount = 0; %сброс счетчика заполнения буфера
+for m =1:1:MASize %очистка буфера
     MABuffer(m) = 0;
 end;
-pulse = false;%сброс флага импульса
-pauseCount = 0;% обнуление длительности паузы
-count = 0;%обнуление счетчика MA
-trigger(ai);%начало захвата
+pulse = false; %сброс флага импульса
+pauseCount = 0; % обнуление длительности паузы
+count = 0; %обнуление счетчика MA
+trigger(ai); %начало захвата
 while (count < nums) %цикл измерений
-    data = getdata(ai); % And to read the data use the getdata function 
-    trigger(ai);% the data samples will not be stored in the data acquisition engine until the TRIGGER command is issued
+    data = getdata(ai); %чтение данных
+    trigger(ai); % the data samples will not be stored in the data acquisition engine until the TRIGGER command is issued
     % GETDATA is a "blocking" function. This means that it will wait until all data have been collected
-    size = length(data);%размер массива данных
-    pulseCount = 0;% обнуление счетчика импульсов в измерении
-    for i = 1:1:size % цикл по всем сэмплам       
-        % если импульс еще не начался
+    size = length(data); %размер массива данных
+    pulseCount = 0; %обнуление счетчика импульсов в измерении
+    for i = 1:1:size %цикл по всем сэмплам       
+        %если импульс еще не начался
         if (pulse == false)
             if (abs(data(i))>threshold)
-            % если уровень превышает предел, то поднимаем флаг начала импульса
+            %если уровень превышает предел, то поднимаем флаг начала импульса
                 pulse = true;
             end
         else
