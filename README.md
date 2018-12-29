@@ -14,5 +14,5 @@ Email:    support@foxylab.com<br/>
 Website:  https://acdc.foxylab.com<br/>
 This software is licensed under the GPL v3.0 License.<br/><br/>
 Dosimeter (for example, http://acdc.foxylab.com/node/32 (in russian) or similar) must be connected to the corresponding audio jack of the computer (the line or microphone input) and give pulse to the particles in contact with a Geiger counter.<br/>
-Detailed description (in russian) - http://acdc.foxylab.com/node/42.<br/><br/>
+Detailed description (in russian) - http://acdc.foxylab.com/node/42.<br/>
 The project is designed to use a 32-bit version of MATLAB.
